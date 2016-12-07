@@ -10,7 +10,7 @@ using Random = UnityEngine.Random;
 public class GlobalDataManager : MonoBehaviour
 {
     private static GlobalDataManager _instance;
-    [Range(1, 5)] public int arrWidth, arrHeight;
+    [Range(1, 5)] public int width, height;
     public int[,] dataGrid;
     public string filePath;
     public string csvTitle;
@@ -25,25 +25,26 @@ public class GlobalDataManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        dataGrid = new int[arrWidth,arrHeight];
-
+        dataGrid = new int[width,height];
         SetupFilePath();
 
+        int i = 0;
         // populate my data.
-        for (int x = 0; x < arrWidth; x++)
+        for (int y = 0; y < height; y++)
         {
-            for (int y = 0; y < arrHeight; y++)
+            for (int x = 0; x < width; x++)
             {
-                print(x);
-                print(y);
                 dataGrid[x, y] = Random.Range(0, 256);
+                i++;
+                print(i);
             }
         }
+        print("grid size" + (dataGrid.Length));
 
-        SaveOutputGrid(dataGrid);
+        //SaveOutputGrid(dataGrid);
     }
 
-   
+
 
     // Update is called once per frame
     void Update()
@@ -51,6 +52,7 @@ public class GlobalDataManager : MonoBehaviour
 
     }
 
+    public void buttonClick() { SaveOutputGrid(dataGrid); }
 
     private void SetupFilePath()
     {
@@ -60,18 +62,11 @@ public class GlobalDataManager : MonoBehaviour
         int csvTotal = 1;
 
         foreach (FileInfo file in files)
-        {
             if (file.Extension == ".csv")
-            {
                 csvTotal += 1;
-                print(file.Name);
-            }
-        }
 
         if (csvTitle == "")
-        {
             csvTitle = "Participant" + csvTotal + ".csv";
-        }
 
         filePath = GetPath(csvTitle);
     }
@@ -86,7 +81,7 @@ public class GlobalDataManager : MonoBehaviour
         {
             for (int x = 0; x < grid.GetUpperBound(0); x++)
             {
-
+                
                 textOutput.AppendLine(grid[x, y].ToString());
                 if (x != upperBound)
                     textOutput.Append(",");

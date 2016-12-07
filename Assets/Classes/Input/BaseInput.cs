@@ -12,4 +12,9 @@ public class BaseInput : MonoBehaviour {
 	void Update () {
 	
 	}
+
+    protected void MoveTo(Vector3 position)
+    {
+        transform.position = position;
+    }
 }
