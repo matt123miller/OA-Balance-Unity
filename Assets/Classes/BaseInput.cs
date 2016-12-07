@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ExportToCSV : MonoBehaviour {
+public class BaseInput : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
@@ -12,6 +12,4 @@ public class ExportToCSV : MonoBehaviour {
 	void Update () {
 	
 	}
-
-    
 }
