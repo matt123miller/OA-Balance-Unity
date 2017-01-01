@@ -5,13 +5,18 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using UnityEngine.Assertions;
 using Random = UnityEngine.Random;
 
 public class GlobalDataManager : MonoBehaviour
 {
     private static GlobalDataManager _instance;
-    [Range(1, 5)] public int width, height;
+    [Range(1, 10)]
+    public int columns, rows;
     public int[,] dataGrid;
+    public string[] columnHeadings;
+
+
     public string filePath;
     public string csvTitle;
 
@@ -25,23 +30,26 @@ public class GlobalDataManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        dataGrid = new int[width,height];
+        dataGrid = new int[columns, rows]; // array initiliase counts from 1
+
         SetupFilePath();
 
-        int i = 0;
-        // populate my data.
-        for (int y = 0; y < height; y++)
+        string strOutput = "";
+
+        // populate the array with some junk data.
+        for (int y = 0; y < rows; y++)
         {
-            for (int x = 0; x < width; x++)
+            for (int x = 0; x < columns; x++)
             {
                 dataGrid[x, y] = Random.Range(0, 256);
-                i++;
-                print(i);
+                
+                //Remove later
+                strOutput = y + " " + x;
+                print(strOutput);
             }
         }
+        // Bit of validation
         print("grid size" + (dataGrid.Length));
-
-        //SaveOutputGrid(dataGrid);
     }
 
 
@@ -52,12 +60,45 @@ public class GlobalDataManager : MonoBehaviour
 
     }
 
-    public void buttonClick() { SaveOutputGrid(dataGrid); }
+    public void ButtonClick() { SaveOutputGrid(dataGrid); }
+
+
+    public void SaveOutputGrid<T>(T[,] grid)
+    {
+        StringBuilder textOutput = new StringBuilder();
+
+        // Create column headings
+        for (int i = 0; i < columnHeadings.Length; i++)
+        {
+            textOutput.Append(columnHeadings[i]);
+            if (i != columnHeadings.Length)
+            {
+                textOutput.Append(",");
+            }
+        }
+        textOutput.Append(Environment.NewLine);
+
+        // Add the data collected to the rows and columns
+        for (int row = 0; row < rows; row++)
+        {
+            for (int column = 0; column < columns; column++)
+            {
+                textOutput.Append(grid[column, row].ToString());
+
+                // This will add a comma unless the end of the row is reached.
+                if (column != columns)
+                    textOutput.Append(",");
+            }
+            textOutput.Append(Environment.NewLine);
+        }
+        
+        System.IO.File.AppendAllText(filePath, textOutput.ToString());
+    }
 
     private void SetupFilePath()
     {
         DirectoryInfo dir = new DirectoryInfo(GetPath() + "/CSV");
-        List<FileInfo> files = dir.GetFiles().ToList();
+        FileInfo[] files = dir.GetFiles();
 
         int csvTotal = 1;
 
@@ -67,31 +108,21 @@ public class GlobalDataManager : MonoBehaviour
 
         if (csvTitle == "")
             csvTitle = "Participant" + csvTotal + ".csv";
+        else // save the file as whatever the user inputs.
+            csvTitle += ".csv";
 
         filePath = GetPath(csvTitle);
     }
 
-
-    public void SaveOutputGrid<T>(T[,] grid)
+    void OnValidate()
     {
-        StringBuilder textOutput = new StringBuilder();
+        // it would be nice to have the columnHeadings array resize when you change the columns number, 
+        // this probably requieres a List as well
 
-        int upperBound = grid.GetUpperBound(0) - 1;
-        for (int y = 0; y < grid.GetUpperBound(1); y++)
-        {
-            for (int x = 0; x < grid.GetUpperBound(0); x++)
-            {
-                
-                textOutput.AppendLine(grid[x, y].ToString());
-                if (x != upperBound)
-                    textOutput.Append(",");
-            }
-            textOutput.Append(Environment.NewLine);
-        }
-
-        System.IO.File.WriteAllText(filePath, textOutput.ToString());
+        //var temp = columnHeadings.Take(columnHeadings.Count);
+        //columnHeadings = new list;
+        // column headings fill with temp, take into account pos or neg change;
     }
-
 
     public string GetPath(string csvTitle)
     {
