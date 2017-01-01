@@ -1,20 +1,21 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class KeyboardInput : BaseInput {
+public class KeyboardInput : MonoBehaviour
+{
+    private VisualiseController controller;
+    public float moveMultiplier;
 
-	// Use this for initialization
-	void Start () {
-	
+	void Awake ()
+	{
+	    controller = GetComponent<VisualiseController>();
 	}
 	
 	// Update is called once per frame
 	void FixedUpdate ()
 	{
-
-	    float x = Input.GetAxisRaw("Horizontal");
-	    float y = Input.GetAxisRaw("Vertical");
-        MoveTo(new Vector2(x, y));
-
+	    Vector2 movement = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+	    movement = movement.normalized * moveMultiplier;
+        controller.MoveBy(movement);
 	}
 }

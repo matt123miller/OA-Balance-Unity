@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class BaseInput : MonoBehaviour {
+public class TargetController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
@@ -12,9 +12,4 @@ public class BaseInput : MonoBehaviour {
 	void Update () {
 	
 	}
-
-    protected void MoveTo(Vector3 position)
-    {
-        transform.position = position;
-    }
 }

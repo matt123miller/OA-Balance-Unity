@@ -87,7 +87,7 @@ public class GlobalDataManager : MonoBehaviour
 
                 // This will add a comma unless the end of the row is reached.
                 if (column != columns)
-                    textOutput.Append(",");
+                    textOutput.Append(";");
             }
             textOutput.Append(Environment.NewLine);
         }
