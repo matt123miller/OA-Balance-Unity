@@ -1,14 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(ParticipantController))]
 public class KeyboardInput : MonoBehaviour
 {
-    private VisualiseController controller;
+    private ParticipantController controller;
     public float moveMultiplier;
 
 	void Awake ()
 	{
-	    controller = GetComponent<VisualiseController>();
+	    controller = GetComponent<ParticipantController>();
 	}
 	
 	// Update is called once per frame

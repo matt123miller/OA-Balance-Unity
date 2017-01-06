@@ -3,11 +3,11 @@ using System.Collections;
 
 public class ForcePlateInput : MonoBehaviour {
 
-    private VisualiseController controller;
+    private ParticipantController controller;
 
     void Awake()
     {
-        controller = GetComponent<VisualiseController>();
+        controller = GetComponent<ParticipantController>();
     }
 
     // Update is called once per frame
