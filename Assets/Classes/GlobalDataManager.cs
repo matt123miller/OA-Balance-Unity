@@ -29,7 +29,7 @@ public class GlobalDataManager : MonoBehaviour
     {
         _instance = this;
 
-        csv = new CSVManager();
+        csv = GetComponent<CSVManager>();
     }
 
 
