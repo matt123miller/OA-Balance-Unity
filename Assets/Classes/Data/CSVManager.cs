@@ -10,6 +10,7 @@ public class CSVManager : MonoBehaviour
 
     public string filePath;
     public string csvTitle;
+    public bool escapeQuotes = false
 
     void Start()
     {
@@ -33,41 +34,14 @@ public class CSVManager : MonoBehaviour
             {
                 textOutput.Append(",");
                 // Hopefully no array overrun
-                textOutput.Append(list[i].ToString());
+                var vector = escapeQuotes ? "\"" + list[i].ToString() + "\"" : list[i].ToString());
+                textOutput.Append(vector);
             }
 
             textOutput.Append(Environment.NewLine);
         }
 
-        // Do I need this really? I'll experiment without, it's really just to make the data more human readable in Excel
-
-        // Create column headings
-        //for (int i = 0; i < columnHeadings.Length; i++)
-        //{
-        //    textOutput.Append(columnHeadings[i]);
-        //    if (i != columnHeadings.Length)
-        //    {
-        //        textOutput.Append(", ,"); // This might make everything bad
-        //    }
-        //}
-        //textOutput.Append(Environment.NewLine);
-
-        //// Add the data collected to the rows and columns
-        //for (int row = 0; row < rows; row++)
-        //{
-        //    for (int column = 0; column < columns; column++)
-        //    {
-        //        //textOutput.Append(data[column, row].ToString());
-
-        //        // Add a comma unless the end of the row is reached.
-        //        if (column != columns)
-        //            textOutput.Append(",");
-        //    }
-        //    textOutput.Append(Environment.NewLine);
-        //}
-        var path = SetupFilePath();
-        print(path);
-        System.IO.File.AppendAllText(path, textOutput.ToString());
+		System.IO.File.AppendAllText(filePath, textOutput.ToString());
     }
 
     private string SetupFilePath()
