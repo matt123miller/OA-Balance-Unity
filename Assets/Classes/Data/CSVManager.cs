@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -11,11 +12,13 @@ public class CSVManager : MonoBehaviour
     public string filePath;
     public string csvTitle;
     public bool escapeQuotes = false;
+    public Text textField;
 
     void Start()
     {
         filePath = SetupFilePath();
         Debug.Log(filePath);
+        textField.text = filePath;
     }
 
     // Generic T MUST implement .ToString() or everything breaks
@@ -73,7 +76,7 @@ public class CSVManager : MonoBehaviour
         return Application.persistentDataPath;
 #elif UNITY_IPHONE
         return Application.persistentDataPath;
-#else
+#else 
         return Application.dataPath;
 #endif
 
