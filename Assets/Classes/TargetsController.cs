@@ -19,41 +19,72 @@ public class TargetsController : MonoBehaviour
     {
         // Subscribe to the collision event
         participant = FindObjectOfType<ParticipantController>();
-        participant.targetCollisionEvent += ChangeTarget;
-        participant.targetCollisionEvent += DisplayTarget;
-        participant.returnHomeEvent += DisplayTarget;
+        SubscribeEvents();
 
         target = GameObject.FindWithTag("Target").transform;
         target.position = targets[positionIndex].position;
 
+        target.gameObject.SetActive(false);
+    }
 
+    private void SubscribeEvents()
+    {
+        participant.targetCollisionEvent += DisplayTarget;
+        participant.returnHomeEvent += ChangeTarget; // Change target must go first on the returnHomeEvent.
+        participant.restFinishedEvent += DisplayTarget;
     }
 
     // Update is called once per frame
-    private void Update()
+    private void UnsubscribeEvents()
     {
-
+        participant.targetCollisionEvent -= DisplayTarget;
+        participant.returnHomeEvent -= ChangeTarget; 
+        participant.restFinishedEvent -= DisplayTarget;
 
     }
 
     // Should be called whenever the participant reaches the target
     private void ChangeTarget()
     {
-        positionIndex = positionIndex + 1 >= targets.Length ? 0 : positionIndex + 1;
+        positionIndex++;
 
-        target.position = targets[positionIndex].position;
+        if (positionIndex < targets.Length)
+        {
+            target.position = targets[positionIndex].position;
+        }
+        else
+        {
+            //target.GetComponent<Collider>().enabled = false;
+            GlobalDataManager.Instance.UnsubscribeEvents();
+            UnsubscribeEvents();
+        }
+
+
+
+
+
+        //{
+        //    target.gameObject.SetActive(false);
+        //}
+        //else
+        //{
+        //}
+
     }
 
     //Should be called whenever participant reaches the target or rest
     private void DisplayTarget()
     {
-        if (target.gameObject.activeInHierarchy)
+        if (positionIndex < targets.Length)
         {
-            target.gameObject.SetActive(false);
-        }
-        else
-        {
-            target.gameObject.SetActive(true);
+            if (target.gameObject.activeInHierarchy)
+            {
+                target.gameObject.SetActive(false);
+            }
+            else
+            {
+                target.gameObject.SetActive(true);
+            }
         }
     }
 }

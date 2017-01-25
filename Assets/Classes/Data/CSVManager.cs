@@ -10,7 +10,7 @@ public class CSVManager : MonoBehaviour
 
     public string filePath;
     public string csvTitle;
-    public bool escapeQuotes = false
+    public bool escapeQuotes = false;
 
     void Start()
     {
@@ -22,32 +22,30 @@ public class CSVManager : MonoBehaviour
     public void SaveOutputGrid<T>(Dictionary<string, List<T>> data)
     {
         StringBuilder textOutput = new StringBuilder();
-
-
+        
         foreach (string key in data.Keys)
         {
             var list = data[key];
             textOutput.Append(key);
 
-
             for (int i = 0; i < list.Count; i++)
             {
                 textOutput.Append(",");
                 // Hopefully no array overrun
-                var vector = escapeQuotes ? "\"" + list[i].ToString() + "\"" : list[i].ToString());
+                var vector = escapeQuotes ? "\"" + list[i].ToString() + "\"" : list[i].ToString();
                 textOutput.Append(vector);
             }
 
             textOutput.Append(Environment.NewLine);
         }
 
-		System.IO.File.AppendAllText(filePath, textOutput.ToString());
+        System.IO.File.AppendAllText(filePath, textOutput.ToString());
     }
 
     private string SetupFilePath()
     {
         // All this just decides what to name the file
-        DirectoryInfo dir = new DirectoryInfo(GetPath() + "/CSV");
+        DirectoryInfo dir = new DirectoryInfo(GetPath() + "/CSV/");
         FileInfo[] files = dir.GetFiles();
 
         int csvTotal = 1;
@@ -62,7 +60,7 @@ public class CSVManager : MonoBehaviour
             csvTitle += ".csv";
 
         // Then this will actually create the path using the gile name
-        return GetPath() + "/CSV/" + csvTitle;
+        return dir.ToString() + csvTitle;
     }
 
 

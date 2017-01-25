@@ -6,17 +6,18 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using UnityEngine.Assertions;
-using Random = UnityEngine.Random;
 
 public class GlobalDataManager : MonoBehaviour
 {
     private static GlobalDataManager _instance;
-    private CSVManager csv;
     public ParticipantController participant;
+    public TargetsController targetController;
+
+    private CSVManager csv;
 
     public bool recording = false;
     public Dictionary<string, List<Vector2>> allRecordingsDict;
-    public string[] columnHeadings;
+    public string[] columnHeadings = { "A", "B", "C", "D" };
     public List<Vector2> currentRecording;
 
 
@@ -30,6 +31,8 @@ public class GlobalDataManager : MonoBehaviour
         _instance = this;
 
         csv = GetComponent<CSVManager>();
+        targetController = GetComponent<TargetsController>();
+        participant = FindObjectOfType<ParticipantController>();
     }
 
 
@@ -39,16 +42,25 @@ public class GlobalDataManager : MonoBehaviour
         currentRecording = new List<Vector2>();
         allRecordingsDict = new Dictionary<string, List<Vector2>>();
 
-        participant = FindObjectOfType<ParticipantController>();
-        participant.returnHomeEvent += ToggleRecording;
-        participant.leaveHomeEvent += ToggleRecording;
-
+        SubscribeEvents();
     }
 
+    public void SubscribeEvents()
+    {
 
+        participant.restFinishedEvent += ToggleRecording;
+        participant.returnHomeEvent += ToggleRecording;
+    }
+
+    public void UnsubscribeEvents()
+    {
+        participant.restFinishedEvent -= ToggleRecording;
+        participant.returnHomeEvent -= ToggleRecording;
+    }
 
     private void ToggleRecording()
     {
+
         if (recording)
         {
             // add to the allRecordings dictionary
@@ -56,9 +68,8 @@ public class GlobalDataManager : MonoBehaviour
             allRecordingsDict.Add(key, currentRecording);
 
             // Whats in my dictionary?
-            print("Added " + key + " to the dictionary");
-            print("There are " + allRecordingsDict.Keys.Count + " Keys in allRecordingsDict");
-            print("The most recent value added contains " + currentRecording.Count + " items");
+            //print("There are " + allRecordingsDict.Keys.Count + " Keys in allRecordingsDict");
+            print("Added " + key + " which contained " + currentRecording.Count + " items");
 
             // Replace current recording with a new one
             currentRecording = new List<Vector2>();
@@ -66,6 +77,7 @@ public class GlobalDataManager : MonoBehaviour
 
 
         recording = !recording;
+        
     }
 
     // Update is called once per frame
