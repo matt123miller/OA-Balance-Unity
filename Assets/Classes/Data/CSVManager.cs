@@ -12,6 +12,7 @@ public class CSVManager : MonoBehaviour
     public string filePath;
     public string csvTitle;
     public bool escapeQuotes = false;
+    public bool fullySplitVector = false;
     public Text textField;
 
     void Start()
@@ -22,10 +23,11 @@ public class CSVManager : MonoBehaviour
     }
 
     // Generic T MUST implement .ToString() or everything breaks
-    public void SaveOutputGrid<T>(Dictionary<string, List<T>> data)
+    public void SaveOutputGrid(Dictionary<string, List<Vector2>> data)
     {
         StringBuilder textOutput = new StringBuilder();
-        
+        string vector;
+
         foreach (string key in data.Keys)
         {
             var list = data[key];
@@ -35,7 +37,16 @@ public class CSVManager : MonoBehaviour
             {
                 textOutput.Append(",");
                 // Hopefully no array overrun
-                var vector = escapeQuotes ? "\"" + list[i].ToString() + "\"" : list[i].ToString();
+                if (fullySplitVector)
+                    vector = list[i].x.ToString() + "," + list[i].y.ToString();
+                
+                else if (!fullySplitVector && escapeQuotes)
+                    vector = "\"" + list[i].ToString() + "\"";
+                
+                else
+                    vector = list[i].ToString();
+                
+
                 textOutput.Append(vector);
             }
 
@@ -48,9 +59,15 @@ public class CSVManager : MonoBehaviour
     private string SetupFilePath()
     {
         // All this just decides what to name the file
-        DirectoryInfo dir = new DirectoryInfo(GetPath() + "/CSV/");
-        FileInfo[] files = dir.GetFiles();
 
+        DirectoryInfo dir;
+#if UNITY_EDITOR
+        dir = new DirectoryInfo(GetPath() + "/CSV/");
+#else
+        // This is the final build option
+        dir = new DirectoryInfo(GetPath());
+#endif
+        FileInfo[] files = dir.GetFiles();
         int csvTotal = 1;
 
         foreach (FileInfo file in files)
@@ -76,10 +93,8 @@ public class CSVManager : MonoBehaviour
         return Application.persistentDataPath;
 #elif UNITY_IPHONE
         return Application.persistentDataPath;
-#else 
-        return Application.dataPath;
 #endif
-
+        return Application.dataPath;
         // Will I have to manually add windows/mac support here?
     }
 }
