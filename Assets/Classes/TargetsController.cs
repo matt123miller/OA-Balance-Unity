@@ -55,7 +55,7 @@ public class TargetsController : MonoBehaviour
         else
         {
             //target.GetComponent<Collider>().enabled = false;
-            GlobalDataManager.Instance.UnsubscribeEvents();
+            GlobalDataManager.Instance.FinishTest();
             UnsubscribeEvents();
         }
 

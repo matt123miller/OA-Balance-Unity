@@ -45,6 +45,13 @@ public class GlobalDataManager : MonoBehaviour
         SubscribeEvents();
     }
 
+    public void FinishTest()
+    {
+        print("Test over, time to save the data");
+        UnsubscribeEvents();
+        csv.SaveOutputGrid(allRecordingsDict);
+    }
+
     public void SubscribeEvents()
     {
 
