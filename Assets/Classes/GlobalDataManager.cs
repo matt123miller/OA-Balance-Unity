@@ -33,6 +33,8 @@ public class GlobalDataManager : MonoBehaviour
         csv = GetComponent<CSVManager>();
         targetController = GetComponent<TargetsController>();
         participant = FindObjectOfType<ParticipantController>();
+
+        SubscribeEvents();
     }
 
 
@@ -42,14 +44,15 @@ public class GlobalDataManager : MonoBehaviour
         currentRecording = new List<Vector2>();
         allRecordingsDict = new Dictionary<string, List<Vector2>>();
 
-        SubscribeEvents();
     }
 
     public void FinishTest()
     {
         print("Test over, time to save the data");
-        UnsubscribeEvents();
         csv.SaveOutputGrid(allRecordingsDict);
+
+        // Must come last
+        UnsubscribeEvents();
     }
 
     public void SubscribeEvents()
@@ -57,12 +60,15 @@ public class GlobalDataManager : MonoBehaviour
 
         participant.restFinishedEvent += ToggleRecording;
         participant.returnHomeEvent += ToggleRecording;
+        participant.returnHomeEvent += SaveRecordngToDictionary;
     }
 
     public void UnsubscribeEvents()
     {
         participant.restFinishedEvent -= ToggleRecording;
         participant.returnHomeEvent -= ToggleRecording;
+        participant.returnHomeEvent -= SaveRecordngToDictionary;
+
     }
 
     private void ToggleRecording()
@@ -70,21 +76,26 @@ public class GlobalDataManager : MonoBehaviour
 
         if (recording)
         {
-            // add to the allRecordings dictionary
-            string key = columnHeadings[allRecordingsDict.Keys.Count];
-            allRecordingsDict.Add(key, currentRecording);
-
-            // Whats in my dictionary?
-            //print("There are " + allRecordingsDict.Keys.Count + " Keys in allRecordingsDict");
-            print("Added " + key + " which contained " + currentRecording.Count + " items");
-
-            // Replace current recording with a new one
-            currentRecording = new List<Vector2>();
+            //SaveRecordngToDictionary();
         }
 
 
         recording = !recording;
         
+    }
+
+    private void SaveRecordngToDictionary()
+    {
+        // add to the allRecordings dictionary
+        string key = columnHeadings[allRecordingsDict.Keys.Count];
+        allRecordingsDict.Add(key, currentRecording);
+
+        // Whats in my dictionary?
+        //print("There are " + allRecordingsDict.Keys.Count + " Keys in allRecordingsDict");
+        print("Added " + key + " which contained " + currentRecording.Count + " items");
+
+        // Replace current recording with a new one
+        currentRecording = new List<Vector2>();
     }
 
     // Update is called once per frame

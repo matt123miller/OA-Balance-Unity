@@ -4,7 +4,7 @@ using System.Collections;
 public class HomeController : MonoBehaviour
 {
 
-    public Collider collider;
+    public new Collider collider;
 
     void Awake()
     {

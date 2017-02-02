@@ -32,19 +32,20 @@ public class CSVManager : MonoBehaviour
         {
             var list = data[key];
             textOutput.Append(key);
+            print(key);
 
             for (int i = 0; i < list.Count; i++)
             {
                 textOutput.Append(",");
                 // Hopefully no array overrun
-                if (fullySplitVector)
-                    vector = list[i].x.ToString() + "," + list[i].y.ToString();
+                //if (fullySplitVector)
+                //    vector = list[i].x.ToString() + "," + list[i].y.ToString();
                 
-                else if (!fullySplitVector && escapeQuotes)
+                //else if (!fullySplitVector && escapeQuotes)
                     vector = "\"" + list[i].ToString() + "\"";
                 
-                else
-                    vector = list[i].ToString();
+                //else
+                //    vector = list[i].ToString();
                 
 
                 textOutput.Append(vector);

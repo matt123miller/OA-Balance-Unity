@@ -12,19 +12,21 @@ public class TargetsController : MonoBehaviour
     public Transform target;
 
 
-
+    private void Awake()
+    {       
+        participant = FindObjectOfType<ParticipantController>();
+    }
 
     // Use this for initialization
     private void Start()
     {
-        // Subscribe to the collision event
-        participant = FindObjectOfType<ParticipantController>();
-        SubscribeEvents();
-
         target = GameObject.FindWithTag("Target").transform;
         target.position = targets[positionIndex].position;
 
         target.gameObject.SetActive(false);
+
+        // Subscribe to the collision event
+        SubscribeEvents();
     }
 
     private void SubscribeEvents()
@@ -54,7 +56,7 @@ public class TargetsController : MonoBehaviour
         }
         else
         {
-            //target.GetComponent<Collider>().enabled = false;
+            ////target.GetComponent<Collider>().enabled = false;
             GlobalDataManager.Instance.FinishTest();
             UnsubscribeEvents();
         }
