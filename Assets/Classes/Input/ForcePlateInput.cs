@@ -1,24 +1,43 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ForcePlateInput : MonoBehaviour {
+public class ForcePlateInput : MonoBehaviour
+{
 
     private ParticipantController controller;
+
+    public Vector2[] inputVectors;
+    public int currentVector = 0;
 
     void Awake()
     {
         controller = GetComponent<ParticipantController>();
     }
 
-    // Update is called once per frame
-    void Update () {
-	    
-        // Get data from the walking platform
-        
-        // parse it somehow
+    void Start()
+    {
+        // Try to normalise all the vectors to be centred ish
+        var firstVector = inputVectors[100];
 
-        // make a Vector2 from it
-        var cop = new Vector2(0,0);
-        controller.MoveTo(cop);
-	}
+        for (int i = 0; i < inputVectors.Length; i++)
+        {
+            inputVectors[i] -= firstVector;
+        }
+    }
+
+    // Update is called once per frame
+    void FixedUpdate()
+    {
+        if (currentVector < inputVectors.Length)
+        {
+            var cop = inputVectors[currentVector];
+            currentVector += 1;
+            controller.MoveTo(cop);
+        }
+        else
+        {
+            // End the input / simulation?
+            Destroy(this);
+        }
+    }
 }

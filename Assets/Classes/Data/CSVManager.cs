@@ -11,6 +11,9 @@ using Random = UnityEngine.Random;
 
 public class CSVManager : MonoBehaviour
 {
+    // Hacky, I'd rather refactor a lot of this stuff into the game manager and put the enums there
+    // Then call what I need from the CSV manager in a functional style.
+    // Including turned the players input methods off/on
     public enum CSVState
     {
         read = 0,
@@ -27,29 +30,36 @@ public class CSVManager : MonoBehaviour
     {
         filePath = SetupFilePath();
         Debug.Log(filePath);
+
+        var player = GameObject.FindWithTag("Player");
+
+
         if (state == CSVState.read)
         {
+
             // Load the file in and send it to the right place.
             StreamReader sr = new StreamReader(filePath);
-            var lines = new List<string[]>();
+            var lines = new List<Vector2>();
             int Row = 0;
-            print(sr.ReadToEnd());
             // Y U NO READ?!?!
-            //while (!sr.EndOfStream)
-            //{
-            //    string[] strInfo = sr.ReadLine().Split(',');
-            //    Vector2 v2 = new Vector2();
-            //    print(strInfo);
-            //    lines.Add(strInfo);
-            //    Row++;
-            //    Console.WriteLine(Row);
-            //}
+            while (!sr.EndOfStream)
+            {
+                string[] strInfo = sr.ReadLine().Trim(new char[]{'\"'}).Split(',');
+                // I need to remove the " at each end first.q
+                Vector2 v2 = new Vector2(Convert.ToSingle(strInfo[0]), Convert.ToSingle(strInfo[1]));
+                lines.Add(v2);
+                Row++;
+                Console.WriteLine(Row);
+            }
 
-            //var data = lines.ToArray();
-            //print(data);
+            var data = lines.ToArray();
+            print(data);
             // Send it to the right place
+            FindObjectOfType<ForcePlateInput>().inputVectors = data;
         }
-        textField.text = filePath;
+
+        var writeread = state == CSVState.read ? "Reading from " : "Writing to ";
+        textField.text = "We are " + writeread + " filepath: " + filePath;
     }
 
     // Generic T MUST implement .ToString() or everything breaks
@@ -97,13 +107,13 @@ public class CSVManager : MonoBehaviour
                     var file = readFiles[i];
                     if (!file.Extension.Contains("meta"))
                     {
-                        path = file.Directory + "\\" + file.Name;
+                        path = dir.ToString() + file.Name;
                     }
 
                 }
                 print(path);
                 // I have a path so now read the fi
-
+                return path;
                 break;
             case CSVState.write:
                 // All this just decides what to name the file
@@ -114,6 +124,7 @@ public class CSVManager : MonoBehaviour
         // This is the final build option
         dir = new DirectoryInfo(GetPath());
 #endif
+                dir = new DirectoryInfo(GetPath() + "/CSV/Write/");
 
                 FileInfo[] writeFiles = dir.GetFiles();
                 int csvTotal = 1;
